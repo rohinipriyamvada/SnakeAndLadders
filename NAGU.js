@@ -1,63 +1,21 @@
+function dice(diceValue) {
+  switch (diceValue) {
+    case 1: return '┏━━━━━━━━┓\n┃⚪ ⚪ ⚪┃\n┃⚪ 🔴 ⚪┃\n┃⚪ ⚪ ⚪┃\n┗━━━━━━━━┛';
+    case 2: return '┏━━━━━━━━┓\n┃🔴 ⚪ ⚪┃\n┃⚪ ⚪ ⚪┃\n┃⚪ ⚪ 🔴┃\n┗━━━━━━━━┛';
+    case 3: return '┏━━━━━━━━┓\n┃⚪ ⚪ 🔴┃\n┃⚪ 🔴 ⚪┃\n┃🔴 ⚪ ⚪┃\n┗━━━━━━━━┛';
+    case 4: return '┏━━━━━━━━┓\n┃🔴 ⚪ 🔴┃\n┃⚪ ⚪ ⚪┃\n┃🔴 ⚪ 🔴┃\n┗━━━━━━━━┛';
+    case 5: return '┏━━━━━━━━┓\n┃🔴 ⚪ 🔴┃\n┃⚪ 🔴 ⚪┃\n┃🔴 ⚪ 🔴┃\n┗━━━━━━━━┛';
+    case 6: return '┏━━━━━━━━┓\n┃🔴 ⚪ 🔴┃\n┃🔴 ⚪ 🔴┃\n┃🔴 ⚪ 🔴┃\n┗━━━━━━━━┛';
+  }
+}
+
 function displayDice(diceValue) {
-  switch(diceValue) {
-    case 1 :return '┏━━━━━━━━┓\n┃⚪ ⚪ ⚪┃\n┃⚪ 🔴 ⚪┃\n┃⚪ ⚪ ⚪┃\n┗━━━━━━━━┛';
-    case 2 :return '┏━━━━━━━━┓\n┃🔴 ⚪ ⚪┃\n┃⚪ ⚪ ⚪┃\n┃⚪ ⚪ 🔴┃\n┗━━━━━━━━┛';
-    case 3 :return '┏━━━━━━━━┓\n┃⚪ ⚪ 🔴┃\n┃⚪ 🔴 ⚪┃\n┃🔴 ⚪ ⚪┃\n┗━━━━━━━━┛';
-    case 4 :return '┏━━━━━━━━┓\n┃🔴 ⚪ 🔴┃\n┃⚪ ⚪ ⚪┃\n┃🔴 ⚪ 🔴┃\n┗━━━━━━━━┛';
-    case 5 :return '┏━━━━━━━━┓\n┃🔴 ⚪ 🔴┃\n┃⚪ 🔴 ⚪┃\n┃🔴 ⚪ 🔴┃\n┗━━━━━━━━┛';
-    case 6 :return '┏━━━━━━━━┓\n┃🔴 ⚪ 🔴┃\n┃🔴 ⚪ 🔴┃\n┃🔴 ⚪ 🔴┃\n┗━━━━━━━━┛';
-  }
+  console.log();
+  console.log(dice(diceValue));
+  console.log();
 }
 
-function snakeHead(position) {
-  switch (position) {
-    case 28:
-    case 37:
-    case 48:
-    case 75:
-    case 94:
-    case 96: return true;
-    default: return false;
-  }
-}
-
-function snakeTail(position) {
-  switch (position) {
-    case 10:
-    case 3:
-    case 16:
-    case 32:
-    case 71:
-    case 42: return true;
-    default: return false;
-  }
-}
-
-function ladderHead(position) {
-  switch (position) {
-    case 4:
-    case 12:
-    case 14:
-    case 22:
-    case 41:
-    case 54: return true;
-    default: return false;
-  }
-}
-
-function ladderEnd(position) {
-  switch (position) {
-    case 56:
-    case 50:
-    case 55:
-    case 58:
-    case 79:
-    case 88: return true;
-    default: return false;
-  }
-}
-
-function movedPosition(position) {
+function isSnakeHead(position) {
   switch (position) {
     case 28: return 10;
     case 37: return 3;
@@ -65,6 +23,22 @@ function movedPosition(position) {
     case 75: return 32;
     case 94: return 71;
     case 96: return 42;
+  }
+}
+
+function isSnakeTail(position) {
+  switch (position) {
+    case 10:
+    case 3:
+    case 16:
+    case 32:
+    case 71:
+    case 42: return true;
+  }
+}
+
+function isLadderHead(position) {
+  switch (position) {
     case 4: return 56;
     case 12: return 50;
     case 14: return 55;
@@ -74,37 +48,60 @@ function movedPosition(position) {
   }
 }
 
+function isLadderEnd(position) {
+  switch (position) {
+    case 56:
+    case 50:
+    case 55:
+    case 58:
+    case 79:
+    case 88: return true;
+  }
+}
+
+function isSnake(position) {
+  return isSnakeHead(position) !== undefined;
+}
+
+function moveTo(currentPosition) {
+  if (isSnake(currentPosition)) {
+    return isSnakeHead(currentPosition);
+  }
+
+  return isLadderHead(currentPosition);
+}
+
 function danger(position) {
   switch (position) {
-    case 28:
-    case 10: return '🐭';
-    case 37:
-    case 3: return '🐷';
-    case 48:
-    case 16: return '🐼';
-    case 75:
-    case 32: return '🐍';
-    case 94:
-    case 71: return '🦊';
-    case 96:
-    case 42: return '🐯';
+    case 28: return '┃ ⬇ 🐭 ';
+    case 10: return '┃  🐭  ';
+    case 37: return '┃ ⬇ 🐷 ';
+    case 3: return '┃  🐷  ';
+    case 48: return '┃ ⬇ 🐼 ';
+    case 16: return '┃  🐼  ';
+    case 75: return '┃ ⬇ 🐍 ';
+    case 32: return '┃  🐍  ';
+    case 94: return '┃ ⬇ 🦊 ';
+    case 71: return '┃  🦊  ';
+    case 96: return '┃ ⬇ 🐯 ';
+    case 42: return '┃  🐯  ';
   }
 }
 
 function safe(position) {
   switch (position) {
-    case 4:
-    case 56: return '🎢';
-    case 12:
-    case 50: return '🚀';
-    case 14:
-    case 55: return '🚁';
-    case 22:
-    case 58: return '✈️ ';
-    case 41:
-    case 79: return '𓊍 ';
-    case 54:
-    case 88: return '🪜';
+    case 4: return '┃ ⬆ 🎢 ';
+    case 56: return '┃  🎢  ';
+    case 12: return '┃ ⬆ 🚀 ';
+    case 50: return '┃  🚀  ';
+    case 14: return '┃ ⬆ 🚁 ';
+    case 55: return '┃  🚁  ';
+    case 22: return '┃ ⬆ ✈️  ';
+    case 58: return '┃  ✈️   ';
+    case 41: return '┃ ⬆ 𓊍  ';
+    case 79: return '┃  𓊍   ';
+    case 54: return '┃ ⬆ 🪜 ';
+    case 88: return '┃  🪜  ';
   }
 }
 
@@ -113,11 +110,11 @@ function createBorder(length, index) {
   const divider = '┣━━━━━━╋━━━━━━╋━━━━━━╋━━━━━━╋━━━━━━╋━━━━━━╋━━━━━━╋━━━━━━╋━━━━━━╋━━━━━━┫';
   const boardBottom = '┗━━━━━━┻━━━━━━┻━━━━━━┻━━━━━━┻━━━━━━┻━━━━━━┻━━━━━━┻━━━━━━┻━━━━━━┻━━━━━━┛';
 
-  if(index === 0) {
+  if (index === 0) {
     return boardTop;
   }
 
-  if(index === length) {
+  if (index === length) {
     return boardBottom;
   }
 
@@ -129,12 +126,19 @@ function boxValue(number, rowcount) {
 }
 
 function addIcons(boxNumber, pos, pos2, idol, idol2) {
-  if (boxNumber === 1 || boxNumber === 100) {
+  if (boxNumber === 1) {
     if (boxNumber === pos || boxNumber === pos2) {
-      return boxNumber === pos ? ' 👍' + idol + ' ' : ' 🥳' + idol2 + ' ';
+      return boxNumber === pos ? ' 👍' + idol + ' ' : ' 👍' + idol2 + ' ';
     }
 
-    return boxNumber === 1 ? ' 👍   ' : ' 🥳   ';
+    return ' 👍   ';
+  }
+  if (boxNumber === 100) {
+    if (boxNumber === pos || boxNumber === pos2) {
+      return boxNumber === pos ? ' 🥳' + idol + ' ' : ' 🥳' + idol2 + ' ';
+    }
+
+    return ' 🥳   ';
   }
 
   const cellNumber = boxNumber < 10 ? '0' + boxNumber : boxNumber;
@@ -158,7 +162,7 @@ function firstRow(length) {
       char += '┃      ';
     }
   }
-  
+
   return char + '┃';
 }
 
@@ -179,21 +183,14 @@ function createIndeces(length, number, rowcount, pos, idol, pos2, idol2) {
 }
 
 function hit(boxNum) {
-  if (snakeHead(boxNum)) {
-    return '┃ ⬇ ' + danger(boxNum) + ' ';
+  if (isSnakeHead(boxNum) || isSnakeTail(boxNum)) {
+    return danger(boxNum);
   }
 
-  if (snakeTail(boxNum)) {
-    return '┃  ' + danger(boxNum) + '  ';
+  if (isLadderHead(boxNum) || isLadderEnd(boxNum)) {
+    return safe(boxNum);
   }
 
-  if (ladderHead(boxNum)) {
-    return '┃ ⬆ ' + safe(boxNum) + ' ';
-  }
-
-  if (ladderEnd(boxNum)) {
-    return '┃  ' + safe(boxNum) + '  ';
-  }
   return '';
 }
 
@@ -237,63 +234,70 @@ function winningStatement(winner) {
   console.log();
 }
 
+function hasPositionChanged(playerPosition) {
+  if (isLadderHead(playerPosition) || isSnakeHead(playerPosition)) {
+    const newPosition = moveTo(playerPosition);
+
+    newPosition > playerPosition
+      ? console.log("🎉🎉CONGRATULATIONS!!! YOU GOT TELEPORTED...🛸")
+      : console.log("OOPS!! 💣💣 !**NEVER GIVE UP**!");
+
+    return newPosition;
+  }
+  return playerPosition;
+}
+
+function displayScores(player, icon, position, other, pos2, icon2) {
+  console.log("Current Position of", player, icon, position, ' |',
+    other, pos2, icon2);
+
+  console.log();
+}
+
 function play(player, playerPosition, p1Icon, other, pos, p2Icon) {
-  let diceValue = Math.round(Math.random() * 6);
+  let diceValue = Math.ceil(Math.random() * 6);
 
-  while (diceValue === 0 || diceValue > 6) {
-    diceValue = Math.round(Math.random() * 6);
-  }
-  console.log();
-  console.log(displayDice(diceValue));
-  console.log();
+  displayDice(diceValue);
+
   playerPosition += diceValue;
-
-  if (ladderHead(playerPosition) || snakeHead(playerPosition)) {
-    const newPosition = movedPosition(playerPosition);
-
-    newPosition > playerPosition   
-    ? console.log("🎉🎉CONGRATULATIONS!!! YOU GOT TELEPORTED...🛸")
-    :  console.log("OOPS!! 💣💣 !**NEVER GIVE UP**!");
-
-    playerPosition = newPosition;
-  }
+  playerPosition = hasPositionChanged(playerPosition);
 
   if (playerPosition > 100) {
     playerPosition -= diceValue;
     console.log("Try again...");
   }
 
-  console.log("Current Position of", player, p1Icon, playerPosition,
-     ' |', other, pos, p2Icon);
-
-  console.log();
+  displayScores(player, p1Icon, playerPosition, other, pos, p2Icon);
 
   return playerPosition;
 }
 
-function start(player1Name, player2Name, p1Position, p2Position, p1, p2) {
+function startDisplay(playerName, position, p1, other, p2Position, p2) {
   console.log();
-  prompt(player1Name, "- Click enter to roll dice");
-  p1Position = play(player1Name, p1Position, p1, player2Name, p2Position, p2);
-  createBox(p1Position, p1, p2Position, p2);
+  prompt(playerName, "- Click enter to roll dice");
+  const playerPosition = play(playerName, position, p1, other, p2Position, p2);
+  createBox(playerPosition, p1, p2Position, p2);
 
-  if (p1Position === 100) {
+  return playerPosition;
+}
+
+function start(player1Name, player2Name, p1Pos, p2Pos, p1Icon, p2Icon) {
+  p1Pos = startDisplay(player1Name, p1Pos, p1Icon, player2Name, p2Pos, p2Icon);
+
+  if (p1Pos === 100) {
     return winningStatement(player1Name);
   }
 
-  console.log();
-  prompt(player2Name, "- Click enter to roll dice");
-  p2Position = play(player2Name, p2Position, p2, player1Name, p1Position, p1);
-  createBox(p1Position, p1, p2Position, p2);
+  p2Pos = startDisplay(player2Name, p2Pos, p2Icon, player1Name, p1Pos, p1Icon);
 
-  if (p2Position === 100) {
+  if (p2Pos === 100) {
     return winningStatement(player2Name);
   }
 
-  return start(player1Name, player2Name, p1Position, p2Position, p1, p2);
+  return start(player1Name, player2Name, p1Pos, p2Pos, p1Icon, p2Icon);
 }
 
-function instructions(){
+function instructions() {
   const interested = confirm("Do you want to read instructions ?");
   if (interested) {
     console.log("It is a two player game && I hope you have made atleast one friend to play with you 🥷🏻");
@@ -327,13 +331,13 @@ function instructions(){
 function userData() {
   const player1Name = prompt("Enter player1 name :", "Doreamon");
   const player2Name = prompt("Enter player2 name :", "Nobita");
-  
+
   console.log(player1Name);
   const player1Icon = prompt("Click enter to confirm your symbol:", "🔵");
-  
+
   console.log(player2Name);
   const player2Icon = prompt("Click enter to confirm your symbol:", "⚫");
-  
+
   instructions();
   start(player1Name, player2Name, 0, 0, player1Icon, player2Icon);
 }
