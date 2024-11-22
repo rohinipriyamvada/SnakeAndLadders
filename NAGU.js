@@ -1,17 +1,52 @@
-function dice(diceValue) {
-  switch (diceValue) {
-    case 1: return '┏━━━━━━━━┓\n┃⚪ ⚪ ⚪┃\n┃⚪ 🔴 ⚪┃\n┃⚪ ⚪ ⚪┃\n┗━━━━━━━━┛';
-    case 2: return '┏━━━━━━━━┓\n┃🔴 ⚪ ⚪┃\n┃⚪ ⚪ ⚪┃\n┃⚪ ⚪ 🔴┃\n┗━━━━━━━━┛';
-    case 3: return '┏━━━━━━━━┓\n┃⚪ ⚪ 🔴┃\n┃⚪ 🔴 ⚪┃\n┃🔴 ⚪ ⚪┃\n┗━━━━━━━━┛';
-    case 4: return '┏━━━━━━━━┓\n┃🔴 ⚪ 🔴┃\n┃⚪ ⚪ ⚪┃\n┃🔴 ⚪ 🔴┃\n┗━━━━━━━━┛';
-    case 5: return '┏━━━━━━━━┓\n┃🔴 ⚪ 🔴┃\n┃⚪ 🔴 ⚪┃\n┃🔴 ⚪ 🔴┃\n┗━━━━━━━━┛';
-    case 6: return '┏━━━━━━━━┓\n┃🔴 ⚪ 🔴┃\n┃🔴 ⚪ 🔴┃\n┃🔴 ⚪ 🔴┃\n┗━━━━━━━━┛';
+const LENGTH = 8;
+
+const EMPTY =      '┃        ┃';
+const MIDDLE_DOT = '┃   🔴   ┃';
+const LEFT_DOT =   '┃🔴      ┃';
+const RIGHT_DOT =  '┃      🔴┃';
+const TWO_DOTS =   '┃🔴    🔴┃';
+
+function repeat(string, times) {
+  if (times === 1) {
+    return string;
   }
+
+  return string + repeat(string, times - 1);
+}
+
+function createTop(length) {
+  return '┏' + repeat('━', length) + '┓';
+}
+
+function createBottom(length) {
+  return '┗' + repeat('━', length) + '┛';
+}
+
+function createMiddle(diceValue) {
+  switch (diceValue) {
+    case 1: return joinLines(EMPTY, MIDDLE_DOT, EMPTY);
+    case 2: return joinLines(LEFT_DOT, EMPTY, RIGHT_DOT);
+    case 3: return joinLines(RIGHT_DOT, MIDDLE_DOT, LEFT_DOT);
+    case 4: return joinLines(TWO_DOTS, EMPTY, TWO_DOTS);
+    case 5: return joinLines(TWO_DOTS, MIDDLE_DOT, TWO_DOTS);
+    case 6: return joinLines(TWO_DOTS, TWO_DOTS, TWO_DOTS);
+  }
+}
+
+function joinLines(firstPart, middlePart, lastPart) {
+  return firstPart + '\n' + middlePart + '\n' + lastPart;
+}
+
+function createDiceFace(diceValue) {
+  return joinLines(
+    createTop(LENGTH), 
+    createMiddle(diceValue), 
+    createBottom(LENGTH));
 }
 
 function displayDice(diceValue) {
   console.log();
-  console.log(dice(diceValue));
+  console.log(createDiceFace(diceValue));
   console.log();
 }
 
@@ -133,6 +168,7 @@ function addIcons(boxNumber, pos, pos2, idol, idol2) {
 
     return ' 👍   ';
   }
+  
   if (boxNumber === 100) {
     if (boxNumber === pos || boxNumber === pos2) {
       return boxNumber === pos ? ' 🥳' + idol + ' ' : ' 🥳' + idol2 + ' ';
@@ -234,7 +270,8 @@ function winningStatement(winner) {
   console.log();
 }
 
-function hasPositionChanged(playerPosition) {
+function changePosition(playerPosition, diceValue) {
+  playerPosition += diceValue;
   if (isLadderHead(playerPosition) || isSnakeHead(playerPosition)) {
     const newPosition = moveTo(playerPosition);
 
@@ -244,6 +281,7 @@ function hasPositionChanged(playerPosition) {
 
     return newPosition;
   }
+
   return playerPosition;
 }
 
@@ -259,8 +297,7 @@ function play(player, playerPosition, p1Icon, other, pos, p2Icon) {
 
   displayDice(diceValue);
 
-  playerPosition += diceValue;
-  playerPosition = hasPositionChanged(playerPosition);
+  playerPosition = changePosition(playerPosition, diceValue);
 
   if (playerPosition > 100) {
     playerPosition -= diceValue;
@@ -298,9 +335,9 @@ function start(player1Name, player2Name, p1Pos, p2Pos, p1Icon, p2Icon) {
 }
 
 function instructions() {
-  const interested = confirm("Do you want to read instructions ?");
-  if (interested) {
-    console.log("It is a two player game && I hope you have made atleast one friend to play with you 🥷🏻");
+  const isInterested = confirm("Do you want to read instructions ?");
+  if (isInterested) {
+    console.log("It is a two player game");
     console.log();
     console.log("The grid contains 1 to 100 numbers");
     console.log();
@@ -310,7 +347,7 @@ function instructions() {
     console.log();
     console.log("The other person also rolls the dice and keep moving... So you gotta test your luck 🫠");
     console.log();
-    console.log("Wherever your position is, your selected icon will be represented in that position (as you keep forgetting to track it) 😁");
+    console.log("Wherever your position is, your selected icon will be represented in that position");
     console.log();
     console.log("At some positions, there are HELPING TOOLS represented with objects which are used to move up preceded by UParrow(⬆ ) indicating the start of climbing up 🤓");
     console.log();
@@ -328,7 +365,7 @@ function instructions() {
   console.log("🤝🤝🤝BEST OF LUCK🤝🤝🤝")
 }
 
-function userData() {
+function playersData() {
   const player1Name = prompt("Enter player1 name :", "Doreamon");
   const player2Name = prompt("Enter player2 name :", "Nobita");
 
@@ -355,7 +392,7 @@ function gameStart() {
   const resume = confirm("PLAY:");
   if (resume) {
     console.log("Let's start!😃");
-    userData();
+    playersData();
   }
 
   console.log("It was nice playing with you, See you again");
@@ -366,6 +403,7 @@ function gameStart() {
   if (restart) {
     gameStart();
   }
+  console.log("THANK YOU");
 }
 
 gameStart();
