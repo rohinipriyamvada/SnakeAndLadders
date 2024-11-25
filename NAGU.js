@@ -1,28 +1,37 @@
 const LENGTH = 8;
 
-const EMPTY =      '┃        ┃';
-const MIDDLE_DOT = '┃   🔴   ┃';
-const LEFT_DOT =   '┃🔴      ┃';
-const RIGHT_DOT =  '┃      🔴┃';
-const TWO_DOTS =   '┃🔴    🔴┃';
+const EMPTY = joinBorders('┃', repeat(' ', 8), '┃');
+const MIDDLE_DOT = joinBorders('┃', '   🔴   ', '┃');
+const LEFT_DOT = joinBorders('┃', '🔴      ', '┃');
+const RIGHT_DOT = joinBorders('┃', '      🔴', '┃');
+const TWO_DOTS = joinBorders('┃', '🔴    🔴', '┃');
 
-function repeat(string, times) {
-  if (times === 1) {
-    return string;
+function repeat(string, times, specialChar, specialCharPos) {
+  let repeatedString = '';
+
+  for (let noOfTimes = 1; noOfTimes <= times; noOfTimes++) {
+    if (noOfTimes % specialCharPos === 0 && specialChar !== undefined) {
+      repeatedString += specialChar;
+      continue;
+    }
+    repeatedString += string;
   }
-
-  return string + repeat(string, times - 1);
+  return repeatedString;
 }
 
-function createTop(length) {
-  return '┏' + repeat('━', length) + '┓';
+function joinBorders(startBorder, string, endBorder) {
+  return startBorder + string + endBorder;
 }
 
-function createBottom(length) {
-  return '┗' + repeat('━', length) + '┛';
+function createTop(length, specialChar, specialCharPos) {
+  return joinBorders('┏', repeat('━', length, specialChar, specialCharPos), '┓');
 }
 
-function createMiddle(diceValue) {
+function createBottom(length, specialChar, specialCharPos) {
+  return joinBorders('┗', repeat('━', length, specialChar, specialCharPos), '┛');
+}
+
+function createDiceMiddle(diceValue) {
   switch (diceValue) {
     case 1: return joinLines(EMPTY, MIDDLE_DOT, EMPTY);
     case 2: return joinLines(LEFT_DOT, EMPTY, RIGHT_DOT);
@@ -39,8 +48,8 @@ function joinLines(firstPart, middlePart, lastPart) {
 
 function createDiceFace(diceValue) {
   return joinLines(
-    createTop(LENGTH), 
-    createMiddle(diceValue), 
+    createTop(LENGTH),
+    createDiceMiddle(diceValue),
     createBottom(LENGTH));
 }
 
@@ -140,10 +149,14 @@ function safe(position) {
   }
 }
 
+function createDivider(length, specialChar, specialCharPos) {
+  return joinBorders('┣', repeat('━', length, specialChar, specialCharPos), '┫');
+}
+
 function createBorder(length, index) {
-  const boardTop = '┏━━━━━━┳━━━━━━┳━━━━━━┳━━━━━━┳━━━━━━┳━━━━━━┳━━━━━━┳━━━━━━┳━━━━━━┳━━━━━━┓';
-  const divider = '┣━━━━━━╋━━━━━━╋━━━━━━╋━━━━━━╋━━━━━━╋━━━━━━╋━━━━━━╋━━━━━━╋━━━━━━╋━━━━━━┫';
-  const boardBottom = '┗━━━━━━┻━━━━━━┻━━━━━━┻━━━━━━┻━━━━━━┻━━━━━━┻━━━━━━┻━━━━━━┻━━━━━━┻━━━━━━┛';
+  const boardTop = createTop(69, '┳', 7);
+  const divider = createDivider(69, '╋', 7);
+  const boardBottom = createBottom(69, '┻', 7);
 
   if (index === 0) {
     return boardTop;
@@ -161,20 +174,13 @@ function boxValue(number, rowcount) {
 }
 
 function addIcons(boxNumber, pos, pos2, idol, idol2) {
-  if (boxNumber === 1) {
+  if (boxNumber === 1 || boxNumber === 100) {
     if (boxNumber === pos || boxNumber === pos2) {
-      return boxNumber === pos ? ' 👍' + idol + ' ' : ' 👍' + idol2 + ' ';
-    }
+      const symbol = boxNumber === 1 ? ' 👍' : ' 🥳';
 
-    return ' 👍   ';
-  }
-  
-  if (boxNumber === 100) {
-    if (boxNumber === pos || boxNumber === pos2) {
-      return boxNumber === pos ? ' 🥳' + idol + ' ' : ' 🥳' + idol2 + ' ';
+      return boxNumber === pos ? symbol + idol + ' ' : symbol + idol2 + ' ';
     }
-
-    return ' 🥳   ';
+    return boxNumber === 1 ? ' 👍   ' : ' 🥳   ';
   }
 
   const cellNumber = boxNumber < 10 ? '0' + boxNumber : boxNumber;
@@ -186,7 +192,6 @@ function addIcons(boxNumber, pos, pos2, idol, idol2) {
     const icon = boxNumber === pos ? idol : idol2;
     return icon + cellNumber + '  ';
   }
-
   return '  ' + cellNumber + '  ';
 }
 
